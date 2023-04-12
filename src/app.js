@@ -1,25 +1,32 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
+
+// import { createRequire } from "module";
+
+// const require = createRequire(import.meta.url);
 const express=require('express')
 const hbs=require('hbs')
-import path from 'path'
+const  path = require('path')
 const fs=require('fs')
-import { fileURLToPath } from 'url';
-var pdf=require('html-pdf')
-import * as cheerio from 'cheerio'
-import fetch from 'node-fetch'
-const puppeteer=require("puppeteer")
+const { fileURLToPath }= require('url');
+const pdf=require('pdf-creator-node')
+// import Cit from '../models/citations.js'
+
+const cit =require('./citations.js')
+const element=require('../public/js/index.js')
 
 
 const app=express()
 const port=process.env.PORT||3000
 
+const  pdfRouter = require('../router/pdf.js')
+const { Console } =require("console");
 
 app.use(express.json())
+app.use(pdfRouter)
+
 
 //define paths for expess config
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 const viewsPAth=path.join(__dirname,'../views') 
 
 
@@ -30,43 +37,46 @@ app.set('views',viewsPAth)
 
 //setup static directory to serve
 
-// app.use(express.static(path.join(__dirname,'../utils')))
+app.use(express.static(path.join(__dirname,'../public')))
 
-// app.get('',(req,res)=>{
-//    res.render('index',{no:"1",ind:"2",cit:"45"})
-// })
+// cit.setup() 
 
-// app.get('/home',(req,res)=>{
-//     var html=fs.readFileSync(path.join(__dirname,'../views/index.hbs'),{no:"1",ind:"2",cit:"45"},'utf8')
+console.log(path.join(__dirname,'../views/pdf.hbs'))
+
+app.get('/home',(req,res)=>{
+    var html=fs.readFileSync(path.join(__dirname,'../views/pdf.hbs'),'utf8')
     
-//     let options={
-//         format:'Letter'
-//     }
-//     pdf.create(html,options).toFile('./invoice4.pdf',function(err,resp){
+    let options={
+        format:'Letter'
+    }
+    let data={
+      no:1,
+      ind:1,
+      cit:1
+    }
+
+    var document={
+      html:html,
+      data:data,
+      path:"./invoice.pdf",
+      type: "",
+    };
+    pdf.create(document,options).then((res)=>{
+      console.log(res);
+    }).catch((error)=>{console.error(error)});
         
-//         if(err) {
-//         return console.log(err);
-//         }
-        
-//         console.log(resp)
-//     })
-//     res.status(200)
-// })
+    res.status(200)
+})
 
-// async function getinfo(){
-//     try {
-//      const response=await fetch('https://scholar.google.com/citations?user=uJJsdiYAAAAJ&hl=en')
-//      const body=await response.text()
-//      const $=cheerio.load(body)
 
-//      const wrapper=$('.gsc_lcl').children()
-//     console.log(wrapper)
-//     } catch (e) {
-//      console.log(e)
-//     }
-// }
 
-// getinfo()
+
+
+app.get('',(req,res)=>{
+   res.render('index',{no:"1",ind:"2",cit:"45"})
+})
+
+
 
 // const SerpApi = require('google-search-results-nodejs');
 // const search = new SerpApi.GoogleSearch("8641a7abba52c4202dd19bee6f8c90cb0ea8f767819de63b5508b7f0237337a9");
@@ -83,45 +93,9 @@ app.set('views',viewsPAth)
 // Show result as JSON
 // search.json(params, callback);
 
-const url = "https://scholar.google.com/citations?user=uJJsdiYAAAAJ&hl=en&oi=ao";
- 
-   const  browser = await puppeteer.launch({
-        headless: false,
-        args: ["--disabled-setuid-sandbox", "--no-sandbox"],
-    });
-    const page = await browser.newPage();
-    await page.setExtraHTTPHeaders({
-        "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36 Agency/97.8.6287.88",
-    });  
-    
-    await page.goto(url, { waitUntil: "domcontentloaded" });
 
- let name=[]
- name= await page.evaluate(() => {
-    return Array.from(document.querySelectorAll("#gsc_prf_w")).map((el) => {
-     return {    
-      name: el.querySelector("#gsc_prf_in")?.textContent,
-      position:el.querySelector(".gsc_prf_il")?.textContent,
-      verfiedat: el.querySelector(" #gsc_prf_ivh")?.textContent,
-    //   writers: el.querySelector(".N96wpd")?.textContent,
-      }
-     })
-    });
-console.log(name)
 
- let citations=[]
- citations= await page.evaluate(() => {
-    return Array.from(document.querySelectorAll(".gsc_rsb")).map((el) => {
-     return {    
-      citations: el.querySelector("#gsc_prf_in")?.textContent,
-      hindex:el.querySelector(".gsc_prf_il")?.textContent,
-      i10index: el.querySelector(" #gsc_prf_ivh")?.textContent,
-    //   writers: el.querySelector(".N96wpd")?.textContent,
-      }
-     })
-    });
-console.log(citations)
+
 app.listen(port,()=>{
     console.log("Server is up on port "+port)
 })
