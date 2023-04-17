@@ -11,7 +11,7 @@ const pdf=require('pdf-creator-node')
 // import Cit from '../models/citations.js'
 
 const cit =require('./citations.js')
-const element=require('../public/js/index.js')
+
 
 
 const app=express()
@@ -28,7 +28,7 @@ app.use(pdfRouter)
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 const viewsPAth=path.join(__dirname,'../views') 
-
+const bodyParser = require('body-parser');
 
 //setup handlebars engine and view location.
 app.set('view engine','hbs')
@@ -39,7 +39,9 @@ app.set('views',viewsPAth)
 
 app.use(express.static(path.join(__dirname,'../public')))
 
-// cit.setup() 
+ 
+app.use(bodyParser.urlencoded({ extended: false }));
+
 
 console.log(path.join(__dirname,'../views/pdf.hbs'))
 
@@ -58,7 +60,7 @@ app.get('/home',(req,res)=>{
     var document={
       html:html,
       data:data,
-      path:"./invoice.pdf",
+      path:"./invoice5.pdf",
       type: "",
     };
     pdf.create(document,options).then((res)=>{
@@ -69,14 +71,25 @@ app.get('/home',(req,res)=>{
 })
 
 
-
-
-
 app.get('',(req,res)=>{
-   res.render('index',{no:"1",ind:"2",cit:"45"})
+  res.render('home')
+})
+
+app.get('/google',(req,res)=>{
+   res.render('google')
+})
+
+app.get('/scopus',(req,res)=>{
+   res.render('scopus')
 })
 
 
+app.post('/submit',(req,res)=>{
+  
+  const name=req.body.name
+  cit.setup(name)
+
+})
 
 // const SerpApi = require('google-search-results-nodejs');
 // const search = new SerpApi.GoogleSearch("8641a7abba52c4202dd19bee6f8c90cb0ea8f767819de63b5508b7f0237337a9");
@@ -90,7 +103,7 @@ app.get('',(req,res)=>{
 //   console.log(data["cited_by"]);
 // };
 
-// Show result as JSON
+// // Show result as JSON
 // search.json(params, callback);
 
 

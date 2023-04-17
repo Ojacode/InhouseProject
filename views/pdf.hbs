@@ -9,11 +9,42 @@
 </head>
 
 <body>
-    <table>
+    <div align="center">
+        <br><br><br>
+        <h2>Faculty Name:Sonkamble</h2>
+        <br>
+        <h2>Citations</h2>
+        <br><br>
+    </div>
+
+    <script>
+        document.write(" <table align= center border=2px solid black> ")
+        document.write(" <tr> ")
+        document.write(" <th style= padding:10px > Title")
+        document.write(" <th style= padding:10px > Cited by")
+        document.write(" <th style= padding:10px > Year ")
+        for (rows = 1; rows <= 5; rows++) {
+            document.write(" <tr> ")
+         for (col = 1; col <= 3; col++) {
+                document.write(" <td style= padding:10px > Row number is " + {{ no }} + " <br> Column number is " + {{ cit }}+ " </td> ")
+                    }
+        document.write(" </tr> ")
+                }
+        document.write(" </table> ")
+    </script>
+    <div align="center">
+        <br><br><br>
+        <hl>Numbers</hl>
+        <br><br><br>
+    </div>
+
+
+
+    <table align="center" border="1">
         <tr>
-            <th>Title </th>
-            <th>Cited By</th>
-            <th>Year</th>
+            <th>Citations </th>
+            <th>hindex</th>
+            <th>i10index</th>
         </tr>
         <tr>
             <td>{{no}}</td>

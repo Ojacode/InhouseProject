@@ -10,14 +10,17 @@
 
 </head>
 <body>
-   <h3 align="center" style="margin:150px">Google Scholar</h3>
-    <form class="form">
-        <div class="form-control">
+    <br><br><br><br>
+   <h3 align="center">Google Scholar</h3>
+    <form class="form" action="/submit" method="post">
+        {{!-- <div class="form-control"> --}}
             {{!-- <label for="">Name of faculty</label> --}}
-            <label for="">Name of faculty</label>
-            <input type="text" id="name">
-        </div>
-        <button class="btn" onclick="validate()">Submit</button>
+            <label for="name">Name of faculty</label>
+            <input type="text" id="name" name="name">
+        {{!-- </div> --}}
+        <button class="btn">
+            <input type="submit" value="Submit" >
+        </button>
     </form>
 </body>
 </html>

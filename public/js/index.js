@@ -1,5 +1,8 @@
-const validate=function(){
+// const validate=function(){
     
-    const element=document.getElementById("name").value
-    alert(element)
-}
+//    var  element=document.getElementById("name").value
+//    return element
+// }
+
+
+// module.exports=validate
