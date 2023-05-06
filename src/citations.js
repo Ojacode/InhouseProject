@@ -1,24 +1,18 @@
 const DB =require('../models/citations.js')
+const S=require('../models/statistics.js')
 require("../db/mongoose")
 // import { createRequire } from "module";
 // const require = createRequire(import.meta.url);
 // import * as cheerio from 'cheerio'
 // const validate=require('../public/js/index.js')
 
-let values = {
-    title :"hello",
-    citeby: "hi",
-    year: 2014
-   }
-// console.log(element)
-// const hi=new DB(values)
-// hi.save()
+
 const puppeteer=require("puppeteer")
 // const db=new DB
 
  const setup= async function(name1){
   // const DB =require('../models/citations.js')
-  
+  // const DB=DB
   const add=name1
   function stringHasTheWhiteSpaceOrNot(value){
    return value.indexOf(' ') >= 0;
@@ -33,12 +27,15 @@ var newname=""
     newname=add
    }
   var url = "https://scholar.google.com/scholar?hl=en&q=";
+//   var url = "https://scholar.google.com/citations?user=uJJsdiYAAAAJ&hl=en";
+
   url=url+newname
  
    const  browser = await puppeteer.launch({
-        headless: false,
+        headless:false,
         args: ["--disabled-setuid-sandbox", "--no-sandbox"],
     });
+
     const page = await browser.newPage();
     await page.setExtraHTTPHeaders({
         "User-Agent":
@@ -50,7 +47,8 @@ var newname=""
     
     let texts = await page.evaluate(() => {
     let data = [];
-    let elements = document.getElementsByClassName('gs_rt2');
+   //  let elements = document.getElementsByClassName('gs_rt');
+   let elements = document.getElementsByClassName('gs_rt2');
     for (var element of elements)
         {
           const href=element.getElementsByTagName("a")[0].href;
@@ -61,6 +59,7 @@ var newname=""
 });
    console.log(texts)
    const gotolink=texts[0].href
+   console.log(gotolink)
    await page.close();
 
    const page2 = await browser.newPage();
@@ -70,39 +69,41 @@ var newname=""
     });  
     
     await page2.goto(gotolink, { waitUntil: "domcontentloaded" });
+   //  await page2.goto(url, { waitUntil: "domcontentloaded" });
     
    
-  let name=[]
+  let name=""
   name= await page2.evaluate(() => {
-    return Array.from(document.querySelectorAll("#gsc_prf_w")).map((el) => {
-     return {    
-      name: el.querySelector("#gsc_prf_in")?.textContent,
-      position:el.querySelector(".gsc_prf_il")?.textContent,
-      verfiedat: el.querySelector(" #gsc_prf_ivh")?.textContent,
+    // return Array.from(document.querySelectorAll("#gsc_prf_w")).map((el) => {
+     return  document.querySelector("#gsc_prf_in")?.textContent
+      // position:el.querySelector(".gsc_prf_il")?.textContent,
+      // verfiedat: el.querySelector(" #gsc_prf_ivh")?.textContent,
     //   writers: el.querySelector(".N96wpd")?.textContent,
-      }
-     })
+    //  })
     });
 console.log(name)
 
 
      
     
-    const rawData = await page2.evaluate(() => {
+    const rawData = await page2.evaluate((name) => {
       let data = [];
       // const DB =require('../models/citations.js')
-    //   const DB=exp.DB
+      // const DB=DB1
+      // console.log(name1)
       let table = document.getElementById('gsc_a_b');
 
       for (var i = 1; i < table.rows.length; i++) {
         let objCells = table.rows.item(i).cells;
-
+        
+        var c =objCells.item(1).innerText
         let values = {
+           author:name,
            title :objCells.item(0).innerText,
-           citeby: objCells.item(1).innerText,
+           citeby: Number(c),
            year: objCells.item(2).innerText
         }
-        //  const db=new DB({values})
+        //  const db=new DB(values)
         //  db.save()
           // const yes=text.querySelector('.gsc_a_at').textcontent;
           // console.log(yes)
@@ -112,14 +113,23 @@ console.log(name)
       }
 
       return data;
-    });
+    },name);
+    
+    for (var data of rawData)
+    { 
+      console.log(data)
+      const db=new DB(data)  
+      db.save()
+    }
 
     console.log(rawData);
 
 
 
    
-     const newData = await page2.evaluate(() => {
+     const newData = await page2.evaluate((name) => {
+
+      console.log(name)
       let table = document.getElementById('gsc_rsb_st');
 
       
@@ -141,17 +151,21 @@ console.log(name)
         }
 
        let  data={
+          author:name,
           citations:row1,
           hindex:row2,
           i10index:row3
         }
-            
+        console.log(name)   
         return data;
-    });
+    },name);
 
-    console.log(newData);
+    console.log(newData)
+    const s=new S(newData)  
+    s.save()
    
 }
+
 
 
 // exports.getStats=getStats;

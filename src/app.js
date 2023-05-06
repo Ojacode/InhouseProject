@@ -1,7 +1,7 @@
-
+// const DB =require('../models/citations.js')
 // import { createRequire } from "module";
-
 // const require = createRequire(import.meta.url);
+const S=require('../models/statistics.js')
 const express=require('express')
 const hbs=require('hbs')
 const  path = require('path')
@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 console.log(path.join(__dirname,'../views/pdf.hbs'))
 
-app.get('/home',(req,res)=>{
+app.get('/generate',(req,res)=>{
     var html=fs.readFileSync(path.join(__dirname,'../views/pdf.hbs'),'utf8')
     
     let options={
@@ -83,12 +83,33 @@ app.get('/scopus',(req,res)=>{
    res.render('scopus')
 })
 
-
 app.post('/submit',(req,res)=>{
   
   const name=req.body.name
   cit.setup(name)
 
+})
+
+// const nameinput="Sonkamble Balwant"
+// const s=S.findOne({name:nameinput})
+// console.log(s)
+// app.get('/citations/:name',async(req,res)=>{
+    
+//     const name=req.params.name
+//     try {
+//     const s= await S.findOne({name:req.params.name})
+//      if(!s){
+//             return res.status(404).send()
+//         }
+//     res.send(s)
+//     } catch (e) {
+//       res.status(500).send()  
+//     }
+
+// })
+
+app.post('/generate',(req,res)=>{
+  alert("hi")
 })
 
 // const SerpApi = require('google-search-results-nodejs');
@@ -106,7 +127,19 @@ app.post('/submit',(req,res)=>{
 // // Show result as JSON
 // search.json(params, callback);
 
-
+// const Captcha = require("2captcha")
+// // A new 'solver' instance with our API key
+// const solver = new Captcha.Solver("<Your 2captcha api key>")
+// /* Example ReCaptcha Website */
+// /*****
+// @params
+// - dataSiteKey
+// - website url where captcha is placed
+// *****/
+// solver.recaptcha("6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5", "https://patrickhlauke.github.io/recaptcha/")
+// .then((res) => {
+// console.log(res)
+// })
 
 
 app.listen(port,()=>{
