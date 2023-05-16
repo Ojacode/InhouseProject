@@ -79,17 +79,32 @@ app.get('/google',(req,res)=>{
    res.render('google')
 })
 
-app.get('/scopus',(req,res)=>{
-   res.render('scopus')
-})
+// app.get('/scopus',(req,res)=>{
+//    res.render('scopus')
+// })
 
 app.post('/submit',(req,res)=>{
   
   const name=req.body.name
   cit.setup(name)
+  res.render('search')
 
 })
 
+app.post('/search',(req,res)=>{
+  
+  const hindex=req.body.hindex;
+  const i10index=req.body.i10index;
+  const author=req.body.author;
+  
+  res.render(pdf.hbs)
+  const query= S.find({'hindex.all':3})
+  console.log(query)
+
+
+  
+
+})
 // const nameinput="Sonkamble Balwant"
 // const s=S.findOne({name:nameinput})
 // console.log(s)

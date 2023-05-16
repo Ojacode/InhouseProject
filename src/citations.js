@@ -57,9 +57,9 @@ var newname=""
         }
     return data
 });
-   console.log(texts)
+  //  console.log(texts)
    const gotolink=texts[0].href
-   console.log(gotolink)
+  //  console.log(gotolink)
    await page.close();
 
    const page2 = await browser.newPage();
@@ -81,7 +81,7 @@ var newname=""
     //   writers: el.querySelector(".N96wpd")?.textContent,
     //  })
     });
-console.log(name)
+// console.log(name)
 
 
      
@@ -117,12 +117,12 @@ console.log(name)
     
     for (var data of rawData)
     { 
-      console.log(data)
+      // console.log(data)
       const db=new DB(data)  
       db.save()
     }
 
-    console.log(rawData);
+    // console.log(rawData);
 
 
 
@@ -156,13 +156,18 @@ console.log(name)
           hindex:row2,
           i10index:row3
         }
-        console.log(name)   
+        // console.log(name)   
         return data;
     },name);
 
-    console.log(newData)
+    // console.log(newData)
     const s=new S(newData)  
     s.save()
+
+    // const query= await S.find({author: 'Kalyani C Waghmare'})
+    // console.log(query)
+    
+  
    
 }
 
