@@ -13,16 +13,20 @@
 
 <body>
     <br><br><br><br>
-    <h3 align="center">Search by</h3>
-    <form class="form" acion="/search" method="post">
-            <label for="">H-index</label>
-            <input type="text" id="name" name="hindex">
-            <br><br>
-            <label for="">i10-index</label>
-            <input type="text" id="name" name="i10index">
-            <br><br>
-            <label for="">Author Name</label>
-            <input type="text" id="name" name="author">
+    <h3 align="center">Search</h3>
+    <form class="form" action="/search" method="post">
+        <h4>Choose input</h4>
+        <input type="radio" id="html" name="checkbox" value="AuthorAll">
+        <label for="html">AuthorAll</label><br>
+        <input type="radio" id="html" name="checkbox" value="Author">
+        <label for="html">Author</label><br>
+        <input type="radio" id="css" name="checkbox" value="Hindex">
+        <label for="css">Hindex</label><br>
+        <input type="radio" id="javascript" name="checkbox" value="I10index">
+        <label for="javascript">I-10 Index</label>
+        <br><br>
+        <label for="Input">Input</label>
+        <input type="text" id="input" name="input"><br>
         <button class="btn" >Search</button>
     </form>
 </body>

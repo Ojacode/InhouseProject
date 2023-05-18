@@ -1,6 +1,7 @@
 const DB =require('../models/citations.js')
 const S=require('../models/statistics.js')
 require("../db/mongoose")
+const cit =require('./citations.js')
 // import { createRequire } from "module";
 // const require = createRequire(import.meta.url);
 // import * as cheerio from 'cheerio'
@@ -117,7 +118,7 @@ var newname=""
     
     for (var data of rawData)
     { 
-      // console.log(data)
+      console.log(data)
       const db=new DB(data)  
       db.save()
     }
@@ -163,7 +164,10 @@ var newname=""
     // console.log(newData)
     const s=new S(newData)  
     s.save()
+   
+    await page2.close()
 
+    await browser.close()
     // const query= await S.find({author: 'Kalyani C Waghmare'})
     // console.log(query)
     

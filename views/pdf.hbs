@@ -11,50 +11,51 @@
 <body>
     <div align="center">
         <br><br><br>
-        <h2>Faculty Name:Sonkamble</h2>
+        <h2>Faculty Name: {{data1.author}}</h2>
         <br>
         <h2>Citations</h2>
         <br><br>
     </div>
 
-    <script>
+    {{!-- <script>
         document.write(" <table align= center border=2px solid black> ")
         document.write(" <tr> ")
         document.write(" <th style= padding:10px > Title")
         document.write(" <th style= padding:10px > Cited by")
         document.write(" <th style= padding:10px > Year ")
-        for (rows = 1; rows <= 5; rows++) {
+        for (rows = 1; rows <=length; rows++) {
             document.write(" <tr> ")
          for (col = 1; col <= 3; col++) {
-                document.write(" <td style= padding:10px > Row number is " + {{ no }} + " <br> Column number is " + {{ cit }}+ " </td> ")
+                document.write(" <td style= padding:10px >" + {{ data.author }} + " <br> Column number is " + {{ cit }}+ " </td> ")
                     }
         document.write(" </tr> ")
                 }
         document.write(" </table> ")
-    </script>
-    <div align="center">
+    </script> --}}
+    {{!-- <div align="center">
         <br><br><br>
         <hl>Numbers</hl>
         <br><br><br>
-    </div>
+    </div> --}}
 
 
 
-    <table align="center" border="1">
+    <table align="center" border="2">
         <tr>
-            <th>Citations </th>
-            <th>hindex</th>
-            <th>i10index</th>
+            <th><h2>Citations</h2></th>
+            <th><h2>Hindex</h2></th>
+            <th><h2>I10index</h2></th>
+
         </tr>
-        <tr>
-            <td>{{no}}</td>
-            <td>{{ind}}</td>
-            <td>{{cit}}</td>
+        <tr align="center">
+            <td><h3>{{data1.citations.all}}</h3></td>
+            <td><h3>{{data1.hindex.all}}</h3></td>
+            <td><h3>{{data1.i10index.all}}</h3></td>
         </tr>
-        <tr>
-            <td>{{no}}</td>
-            <td>{{ind}}</td>
-            <td>{{cit}}</td>
+        <tr align="center">
+           <td><h3>{{data1.citations.Since2018}}</h3></td>
+            <td><h3>{{data1.hindex.Since2018}}</h3></td>
+            <td><h3>{{data1.i10index.Since2018}}</h3></td>
         </tr>
     </table>
 </body>

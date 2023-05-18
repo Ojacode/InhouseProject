@@ -1,6 +1,4 @@
-// const DB =require('../models/citations.js')
-// import { createRequire } from "module";
-// const require = createRequire(import.meta.url);
+const DB =require('../models/citations.js')
 const S=require('../models/statistics.js')
 const express=require('express')
 const hbs=require('hbs')
@@ -8,7 +6,8 @@ const  path = require('path')
 const fs=require('fs')
 const { fileURLToPath }= require('url');
 const pdf=require('pdf-creator-node')
-// import Cit from '../models/citations.js'
+const generate=require('./pdf.js')
+const compute=require('./excel.js')
 
 const cit =require('./citations.js')
 
@@ -45,32 +44,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 console.log(path.join(__dirname,'../views/pdf.hbs'))
 
-app.get('/generate',(req,res)=>{
-    var html=fs.readFileSync(path.join(__dirname,'../views/pdf.hbs'),'utf8')
-    
-    let options={
-        format:'Letter'
-    }
-    let data={
-      no:1,
-      ind:1,
-      cit:1
-    }
-
-    var document={
-      html:html,
-      data:data,
-      path:"./invoice5.pdf",
-      type: "",
-    };
-    pdf.create(document,options).then((res)=>{
-      console.log(res);
-    }).catch((error)=>{console.error(error)});
-        
-    res.status(200)
-})
-
-
 app.get('',(req,res)=>{
   res.render('home')
 })
@@ -78,10 +51,6 @@ app.get('',(req,res)=>{
 app.get('/google',(req,res)=>{
    res.render('google')
 })
-
-// app.get('/scopus',(req,res)=>{
-//    res.render('scopus')
-// })
 
 app.post('/submit',(req,res)=>{
   
@@ -91,71 +60,53 @@ app.post('/submit',(req,res)=>{
 
 })
 
-app.post('/search',(req,res)=>{
+app.post('/search',async(req,res)=>{
   
-  const hindex=req.body.hindex;
-  const i10index=req.body.i10index;
-  const author=req.body.author;
-  
-  res.render(pdf.hbs)
-  const query= S.find({'hindex.all':3})
-  console.log(query)
-
-
-  
-
-})
-// const nameinput="Sonkamble Balwant"
-// const s=S.findOne({name:nameinput})
-// console.log(s)
-// app.get('/citations/:name',async(req,res)=>{
+  // alert("hello")
+  // console.log(req.body)
+  const input=req.body.input;
+  const key=req.body.checkbox;
+  var object={}
+  var result={}
+  var database={}
+  if(key=='AuthorAll')
+  { 
+    compute()
+  }
+  else if(key=='Author')
+  {
+    object={author:input}
+    result= await S.findOne(object).lean()
+    database=await DB.find(object).lean()
     
-//     const name=req.params.name
-//     try {
-//     const s= await S.findOne({name:req.params.name})
-//      if(!s){
-//             return res.status(404).send()
-//         }
-//     res.send(s)
-//     } catch (e) {
-//       res.status(500).send()  
-//     }
+    generate(database)
+  }
+  else if(key=='Hindex')
+  {
+    object={'hindex.all':input}
+    result= await S.findOne(object).lean()
+    database=await DB.find({author:result.author}).lean()
+    console.log(object,result,database)
+    generate(database)
 
-// })
+  }
+  else
+  {
+   object={'i10index.all':input}
+   result= await S.findOne(object).lean()
+   database=await DB.find({author:result.author}).lean()
+   console.log(database)
+   generate(key,database,result)
 
-app.post('/generate',(req,res)=>{
-  alert("hi")
+  }
+
+  // console.log(result,database)
+  res.send({result,database})  
+ 
+  // const query= await S.find(object)
+  // const query= await S.find({author:'Kalyani C Waghmare'})
+  // console.log(query)
 })
-
-// const SerpApi = require('google-search-results-nodejs');
-// const search = new SerpApi.GoogleSearch("8641a7abba52c4202dd19bee6f8c90cb0ea8f767819de63b5508b7f0237337a9");
-
-// const params = {
-//   engine: "google_scholar_author",
-//   author_id: "uJJsdiYAAAAJ"
-// };
-
-// const callback = function(data) {
-//   console.log(data["cited_by"]);
-// };
-
-// // Show result as JSON
-// search.json(params, callback);
-
-// const Captcha = require("2captcha")
-// // A new 'solver' instance with our API key
-// const solver = new Captcha.Solver("<Your 2captcha api key>")
-// /* Example ReCaptcha Website */
-// /*****
-// @params
-// - dataSiteKey
-// - website url where captcha is placed
-// *****/
-// solver.recaptcha("6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5", "https://patrickhlauke.github.io/recaptcha/")
-// .then((res) => {
-// console.log(res)
-// })
-
 
 app.listen(port,()=>{
     console.log("Server is up on port "+port)
