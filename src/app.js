@@ -8,17 +8,27 @@ const { fileURLToPath }= require('url');
 const pdf=require('pdf-creator-node')
 const generate=require('./pdf.js')
 const compute=require('./excel.js')
-
+const logger = require('morgan');
+const cors = require('cors');
 const cit =require('./citations.js')
-
 
 
 const app=express()
 const port=process.env.PORT||3000
 
+//use cors to allow cross origin resource sharing
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  })
+);
+
 const  pdfRouter = require('../router/pdf.js')
 const { Console } =require("console");
 
+app.use(logger('dev'));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
 app.use(pdfRouter)
 
@@ -26,12 +36,22 @@ app.use(pdfRouter)
 //define paths for expess config
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
-const viewsPAth=path.join(__dirname,'../views') 
+const viewsPAth=path.join(__dirname,'../views') //
 const bodyParser = require('body-parser');
 
 //setup handlebars engine and view location.
 app.set('view engine','hbs')
 app.set('views',viewsPAth)
+
+
+// app.post("/post", (req, res) => {
+// console.log("Connected to React");
+// res.redirect("/");
+// });
+
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, console.log(`Server started on port ${PORT}`));
 
 
 //setup static directory to serve
@@ -43,6 +63,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 console.log(path.join(__dirname,'../views/pdf.hbs'))
+
+// app.post("/post", (req, res) => {
+// console.log("Connected to React");
+// res.redirect("/");
+// });
 
 app.get('',(req,res)=>{
   res.render('home')
@@ -79,7 +104,7 @@ app.post('/search',async(req,res)=>{
     result= await S.findOne(object).lean()
     database=await DB.find(object).lean()
     
-    generate(database)
+    generate(key,result)
   }
   else if(key=='Hindex')
   {
@@ -87,7 +112,7 @@ app.post('/search',async(req,res)=>{
     result= await S.findOne(object).lean()
     database=await DB.find({author:result.author}).lean()
     console.log(object,result,database)
-    generate(database)
+    generate(key,result)
 
   }
   else
@@ -96,7 +121,7 @@ app.post('/search',async(req,res)=>{
    result= await S.findOne(object).lean()
    database=await DB.find({author:result.author}).lean()
    console.log(database)
-   generate(key,database,result)
+   generate(key,result)
 
   }
 

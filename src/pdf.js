@@ -5,7 +5,7 @@ const pdf=require('pdf-creator-node')
 const S=require('../models/statistics.js')
 const DB =require('../models/citations.js')
 
-const generate = async function (key,database,result){
+const generate = async function (key,result){
     var html=fs.readFileSync(path.join(__dirname,'../views/pdf.hbs'),'utf8')
     
     let options={
@@ -14,10 +14,9 @@ const generate = async function (key,database,result){
 
     var document={
       html:html,
-      data:{
-        no:4,
-        data1:result,
-        data2:database
+      data:{      
+        result:result,
+        // data2:database
         // length:database.length
       },
       path: key +".pdf",
